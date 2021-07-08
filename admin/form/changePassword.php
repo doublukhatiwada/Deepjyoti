@@ -1,29 +1,30 @@
 <?php
-    include 'php/session.php';
-    include '../class/database_table.php';
-    include '../connection/connect.php';
+    include '../php/session.php';
+    include '../../class/database_table.php';
+    include '../../connection/connect.php';
 
 
     $users = new Database_Table('users');
 
-    $user_id = $_SESSION['user_id'];
+    // $user_id = $_SESSION['user_id'];
 
-    if(isset($user_id == ''))
-        header('../login.php');
+    // if(isset($user_id == ''))
+    //     header('../login.php');
 
 
   if(isset($_POST['submit'])){ 
 
     $data = $users->findData('id',$_SESSION['user_id']);
+    $d = $data->fetch();
 
-    if(isset(password_hash($_POST['password'],PASSWORD_DEFAULT)!= $data['password'])){
+    if(password_hash($_POST['c_password'],PASSWORD_DEFAULT)!== $d['password']){
         $info = "!!!!Please enter valid correct password!!!!";
     }
 
     if(isset($_POST['n_password']) == $_POST['cn_password']){
 
     $values = [
-        'id' => $data['id'],
+        'id' => $d['id'],
         'password'=> password_hash($_POST['n_password'],PASSWORD_DEFAULT)
     ];
     }
@@ -31,7 +32,7 @@
         $info = "!!!!!Please Confirm Your password!!!!!";
 
     $users->savedata($values,'id'); 
-
+}
 
 ?>
 
@@ -160,7 +161,7 @@
                                     <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
                                         <button class="btn btn-primary" type="button">Cancel</button>
                                         <button class="btn btn-primary" type="reset">Reset</button>
-                                        <button type="submit" class="btn btn-success">Submit</button>
+                                        <input type="submit" name="submit" class="btn btn-primary"> 
                                     </div>
                                 </div>
 

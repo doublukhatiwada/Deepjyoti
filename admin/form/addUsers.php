@@ -1,31 +1,37 @@
 <?php
-    include 'php/session.php';
-    include '../class/database_table.php';
-    include '../connection/connect.php';
-
-
+    include '../php/session.php';
+    include '../../class/database_table.php';
+    include '../../connection/connect.php';
     $users = new Database_Table('users');
+    $companies = new Database_Table('companies');
+
 
     $user_id = $_SESSION['user_id'];
-
-    if(isset($user_id == ''))
+    
+    if($user_id == '')
         header('../login.php');
+
+    $unsigned_user = $users->findData('password','');
+    $com = $companies->findAllData();
 
 
   if(isset($_POST['submit'])){ 
 
+
     $data = $users->findData('id',$_POST['user_id']);
+    $r = $data->fetch();
 
     $values = [
-        'id' => $data['id'],
-        'company_id' => $_POST['company_id'],
-        'password'=> password_hash($data['first_name'].$data['last_name'],PASSWORD_DEFAULT)
+        'id' => $r['id'],
+        'type'=>"admin",
+        'c_id' => $_POST['company_id'],
+        'password'=> password_hash($r['first_name'].$r['last_name'],PASSWORD_DEFAULT)
     ];
   
 
     $users->savedata($values,'id'); 
 
-
+}
 ?>
 
 <!DOCTYPE html>
@@ -121,9 +127,10 @@
                                            for="teller_code"> User Name <span class="required">*</span>
                                     </label>
                                     <div class="col-md-6 col-sm-6 col-xs-12">
-                                    <select class="form-control col-md-7 col-xs-12"   name="user_id" required="true">
-                                        <option  class="form-control col-md-7 col-xs-12">
-                                        </option>
+                                    <select class="form-control col-md-7 col-xs-12"   name="user_id">
+                                        <?php foreach ($unsigned_user as $a):?>
+                                        <option class="form-control col-md-7 col-xs-12" value="<?php echo $a['id'] ?>"><?php echo $a['first_name'].' '.$a['last_name']?></option>
+                                    <?php endforeach;?>
                                     </select>
                                     </div>
                                 </div>
@@ -134,9 +141,10 @@
                                            for="teller_code"> Company <span class="required">*</span>
                                     </label>
                                     <div class="col-md-6 col-sm-6 col-xs-12">
-                                    <select class="form-control col-md-7 col-xs-12"   name="company_id" required="true">
-                                        <option  class="form-control col-md-7 col-xs-12">
-                                        </option>
+                                    <select class="form-control col-md-7 col-xs-12" name="company_id">
+                                        <?php foreach ($com as $b):?>
+                                        <option class="form-control col-md-7 col-xs-12" value="<?php echo $b['id'] ?>;"><?php echo $b['company_name']?></option>
+                                    <?php endforeach;?>
                                     </select>
                                     </div>
                                 </div>
@@ -146,7 +154,7 @@
                                     <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
                                         <button class="btn btn-primary" type="button">Cancel</button>
                                         <button class="btn btn-primary" type="reset">Reset</button>
-                                        <button type="submit" name = "submit"class="btn btn-success">Submit</button>
+                                        <input type="submit" name="submit" class="btn btn-primary"> 
                                     </div>
                                 </div>
 

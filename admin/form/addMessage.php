@@ -1,41 +1,74 @@
 <?php
-    include 'php/session.php';
-    include '../class/database_table.php';
-    include '../connection/connect.php';
-
+    
+    include '../php/session.php';
+    include '../../class/database_table.php';
+    include '../../connection/connect.php';
 
     $message= new Database_Table('messages');
 
-
+    $i = '';
     $user_id = $_SESSION['user_id'];
 
-    if(isset($user_id == ''))
+    if(isset($user_id == null))
         header('../login.php');
 
     
   if(isset($_GET['edit'])){ 
-        $find_query = $message->findData('id', $_GET['edit']);
+        $find_query = $message->findData('company_id', $_GET['edit']);
         $data = $find_query->fetch(); 
+         if(isset($_FILES['image'])){
+         $find_image = $images->findData('id',$data["image_id"]);
+         $i = $find_image['id'];
         }
+        $i = '';
     }
+        }
+    
     else{
   }
 
 
   if(isset($_POST['submit'])){ 
 
+    if(isset($_FILES['image'])){
+       
+        $count[] =$images->findAlldata();
+    move_uploaded_file($_FILES['image']['tmp_name'], '../../images/company/' . basename($_FILES['image']['name']));
+
+    $images1 = [
+        'image_name' => $_FILES['image']['name'],
+        'image_type'=>"Message Image",
+        'id' => $i
+    ];
+   
+     $images->savedata($images1,$i);
+
+     $last_image = $images->findLastData();
+     $l_i = $last_image->fetch(); 
+
     $values = [
         'id' => $_POST['id'],
         'company_id' => $_SESSION['company_id'], 
-        'description' =>$_POST['description'],
+        'Description' =>$_POST['description'],
+        'given_by' =>$_POST['given_by'],
+        'position'=>$_POST['position'],
+        'image_id' => $l_i['id']
+    ];
+  }
+  else{
+     $values = [
+        'id' => $_POST['id'],
+        'company_id' => $_SESSION['company_id'], 
+        'Description' =>$_POST['description'],
         'given_by' =>$_POST['given_by'],
         'position'=>$_POST['position']
     ];
-  
+
+  }
 
     $message->savedata($values,'id');
 
-
+}
 ?>
 <!DOCTYPE html>
 <html lang="en" >
@@ -109,7 +142,7 @@
                             <div>
                             <!-- <div th:switch="${del != null OR archived != null}"> -->
                                 <!-- <h2 > User Name here <small> Related Company here</small></h2> -->
-                                <h2>Add Chairman's/Director's Message<small>in your company</small></h2>
+                                <h2>Add Chairman's/Director's/ CEO's Message<small>in your company</small></h2>
                             </div>
                             <ul class="nav navbar-right panel_toolbox">
                                 <!-- <li th:switch="${del != null}">
@@ -132,9 +165,7 @@
                                            for="teller_code"> Description <span class="required"></span>
                                     </label>
                                     <div class="col-md-6 col-sm-6 col-xs-12">
-                                        <textarea class="form-control col-md-7 col-xs-12" type="text"  name="description" required="true">
-
-                                        <?php if(isset($data['description'])) echo $data['description'];?>
+                                        <textarea class="form-control col-md-7 col-xs-12" type="text"  name="description" required="true"><?php if(isset($data['Description'])) echo $data['Description'];?>
                                         </textarea>
                                     </div>
                                 </div>
@@ -155,17 +186,26 @@
                                            for="teller_code"> Designation<span class="required">*</span>
                                     </label>
                                     <div class="col-md-6 col-sm-6 col-xs-12">
-                                        <input  class="form-control col-md-7 col-xs-12" type="text"  name="position" required="true" placeholder="Managing Director" value="<?php if(isset($data['poition'])) echo $data['position'];?>">
+                                        <input  class="form-control col-md-7 col-xs-12" type="text"  name="position" required="true" placeholder="Managing Director" value="<?php if(isset($data['position'])) echo $data['position'];?>">
                                     </div>
                                 </div>
                             </div>
+
+                            <div class="form-group" >
+                                    <label class="control-label col-md-3 col-sm-3 col-xs-12"
+                                           for="teller_code"> Display Image<span class="required">*</span>
+                                    </label>
+                                    <div class="col-md-6 col-sm-6 col-xs-12">
+                                        <input type="file"  class="form-control col-md-7 col-xs-12"  name="image">
+                                    </div>
+                                </div>
 
                                 <div class="ln_solid"></div>
                                 <div class="form-group">
                                     <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
                                         <button class="btn btn-primary" type="button">Cancel</button>
                                         <button class="btn btn-primary" type="reset">Reset</button>
-                                        <button type="submit" class="btn btn-success">Submit</button>
+                                        <input type="submit" name="submit" class="btn btn-primary"> 
                                     </div>
                                 </div>
 

@@ -28,7 +28,7 @@
                                     
                                      <li> <a href="#companies">Companies</a> </li>
                                    
-								    <li> <a href="#team">Our Team</a> </li>
+								    <!-- <li> <a href="#team">Our Team</a> </li> -->
                                      
 									<li> <a href="#contact">Contact</a> </li>
 										
@@ -66,9 +66,9 @@
 <!-- Companies Ends Here -->
 
 <!-- Contact Starts Here -->
-	<section id="team" class="team">
-		<?php include 'sections/team.php';?>
-	</section>
+<!-- 	<section id="team" class="team">
+		<?php //include 'sections/team.php';?>
+	</section> -->
 <!-- Contact Ends Here -->
 
 

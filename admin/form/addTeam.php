@@ -1,31 +1,27 @@
 <?php
-    include 'php/session.php';
-    include '../class/database_table.php';
-    include '../connection/connect.php';
+    include '../php/session.php';
+    include '../../class/database_table.php';
+    include '../../connection/connect.php';
 
 
     $users = new Database_Table('users');
     $images = new Database_Table('images');
 
 
+    $i = '';
     $user_id = $_SESSION['user_id'];
 
-    if(isset($user_id == ''))
+    if($user_id == null)
         header('../login.php');
-
     
   if(isset($_GET['edit'])){ 
-        if( $_FILES['image']['name'] != null){
         $find_query = $users->findData('id', $_GET['edit']);
         $data = $find_query->fetch(); 
+        if(isset($_FILES['image'])){
          $find_image = $images->findData('id',$data["image_id"]);
-         $image_id = $find_image['id'];
+         $i = $find_image['id'];
         }
-        else{
-        $find_query = $users->findData('id', $_GET['edit']);
-        $data = $find_query->fetch(); 
-        $image_id = '';
-        }
+        $i = '';
     }
     else{
   }
@@ -33,35 +29,54 @@
 
   if(isset($_POST['submit'])){ 
 
-    $count[] =images->findAlldata();
-    move_uploaded_file($_FILES['image']['tmp_name'], '../images/team/' . basename($_FILES['image']['name']));
+    if(isset($_FILES['image'])){
+       
+        $count[] =$images->findAlldata();
+    move_uploaded_file($_FILES['image']['tmp_name'], '../../images/team/' . basename($_FILES['image']['name']));
 
     $images1 = [
         'image_name' => $_FILES['image']['name'],
-        'image_type'=>"User Image",
-        'id' = $images_id
+        'image_type'=>"Company Team's Image",
+        'id' => $i
     ];
    
-   $images->savedata($images1,$images_id);
+     $images->savedata($images1,$i);
 
-   $last_image = $images->findLastData();
+     $last_image = $images->findLastData();
+     $l_i = $last_image->fetch(); 
+     
+     $values = [
+        'id' => $_POST['id'],
+        'first_name' => $_POST['first_name'], 
+        'middle_name' =>$_POST['middle_name'],
+        'last_name' =>$_POST['last_name'],
+        'email' =>$_POST['email'],
+        'contact'=>$_POST['contact'],
+        'company_id'=> $_SESSION['company_id'],
+        'gender' => $_POST['gender'],
+        'image_id'=>$l_i['id']
+    ];
 
+    }
+
+    else {
     $values = [
         'id' => $_POST['id'],
         'first_name' => $_POST['first_name'], 
         'middle_name' =>$_POST['middle_name'],
         'last_name' =>$_POST['last_name'],
         'email' =>$_POST['email'],
-        'contact'=>$_POST['contact_no'],
+        'contact'=>$_POST['contact'],
         'company_id'=> $_SESSION['company_id'],
-        'gender' => $_POST['gender'],
-        'image_id'=>$_POST[$last_image['id']]
+        'gender' => $_POST['gender']
+       
     ];
-  
+
+    }
 
     $users->savedata($values,'id');
 
-
+}
 ?>
 
 <!DOCTYPE html>
@@ -152,7 +167,7 @@
                         <div class="x_content">
                             <br />
                             
-                            <form id="demo-form2" data-parsley-validate class="form-horizontal form-label-left" method="post" action="addTeam.php">
+                            <form id="demo-form2" data-parsley-validate class="form-horizontal form-label-left" method="post" action="addTeam.php" enctype="multipart/form-data">
 
                                 <input type="hidden" name="id" value="<?php if(isset($data['id'])) echo $data['id'];?>" />
 
@@ -187,10 +202,13 @@
                                     <label class="control-label col-md-3 col-sm-3 col-xs-12"
                                            for="teller_code"> Gender <span class="required">*</span>
                                     </label>
-                                    <select class="col-md-6 col-sm-6 col-xs-12" name="gender">
-                                        <option  class="form-control col-md-7 col-xs-12" type="text" value="male" <?php if(isset($data['gender'])) == "male" :?> selected = "selected" >Male</option>
-                                        <option  class="form-control col-md-7 col-xs-12" type="text" value="female"  <?php if(isset($data['gender'])) == "female" :?> selected = "selected">Female</option>
-                                    </section>
+                                    <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <select class="form-control" name="gender">
+                                        <option  class="form-control col-md-7 col-xs-12" value="male" <?php if(isset($data['gender']) == "male") :?> selected = "selected" <?php endif; ?> >Male</option>
+                                        <option  class="form-control col-md-7 col-xs-12"  value="female"  <?php if(isset($data['gender']) == "female") :?> selected = "selected" <?php endif; ?>>Female</option>
+                                    </select>
+                                </div>
+
                                 </div>
 
                                 <div class="form-group" >
@@ -198,7 +216,7 @@
                                            for="teller_code"> Photo <span class="required">*</span>
                                     </label>
                                     <div class="col-md-6 col-sm-6 col-xs-12">
-                                        <input type="file"  class="form-control col-md-7 col-xs-12"  name="photo">
+                                        <input type="file"  class="form-control col-md-7 col-xs-12"  name="image" />
                                     </div>
                                 </div>
 
@@ -225,7 +243,7 @@
                                     <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
                                         <button class="btn btn-primary" type="button">Cancel</button>
                                         <button class="btn btn-primary" type="reset">Reset</button>
-                                        <button type="submit" class="btn btn-success">Submit</button>
+                                        <input type="submit" name="submit" class="btn btn-primary"> 
                                     </div>
                                 </div>
 

@@ -1,4 +1,7 @@
-
+<?php
+     include '../class/database_table.php';
+    include '../connection/connect.php';;
+?>
     <!--Start Companies-->
     <section id="team" class="section">
            <div class="container">

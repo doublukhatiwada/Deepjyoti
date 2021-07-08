@@ -1,26 +1,31 @@
+
 <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
     <div class="menu_section">
         <h3>General</h3>
         <ul class="nav side-menu">
             <li><a><i class="fa fa-home"></i> Home <span class="fa fa-chevron-down"></span></a>
                 <ul class="nav child_menu">
-                    <li><a href="/admin/dashboard">Message</a></li>
+                    <li><a href="../form/addMessage.php">Message</a></li>
                     
                 </ul>
             </li>
             <li><a><i class="fa fa-home"></i> Form <span class="fa fa-chevron-down"></span></a>
                 <ul class="nav child_menu">
-                    <li><a href="/admin/form/addTeam.php">Add Team</a></li>
-                    <li><a href="/admin/form/addDocuments.php">Add Document</a></li>
-                    <li><a href="/admin/form/addClient.php">Add Client Review</a></li>
+                   <li> <?php if($_SESSION['company_id'] == 1):?><a href="../form/addusers.php"> Add Users</a><?php endif;?></li>
+                    <li><?php if($_SESSION['company_id'] == 1):?><a href="../form/addCompany.php"> Add Company</a><?php endif;?></li>
+                    <li><?php if($_SESSION['company_id'] != 1):?><a href="../form/addTeam.php">Add Team</a><?php endif;?></li>
+                <li><?php if($_SESSION['company_id'] != 1):?><a href="../form/addDocuments.php">Add Document</a><?php endif;?></li>
+            <li><?php if($_SESSION['company_id'] != 1):?><a href="../form/addClient.php"> Add Client's Review</a><?php endif;?></li>
                 </ul>
             </li>
             
             <li><a><i class="fa fa-edit"></i> Lists <span class="fa fa-chevron-down"></span></a>
                 <ul class="nav child_menu">
-                    <li><a href="/admin/table/listTeams.php">Teams</a></li>
-                    <li><a href="/admin/table/listDocument.php">Documents</a></li>
-                    <li><a href="/admin/table/listClients.php">Client Reviews</a></li>
+                    <li><?php if($_SESSION['company_id'] == 1):?><a href="../table/listUsers.php">Users</a><?php endif;?></li>
+                    <li><?php if($_SESSION['company_id'] == 1):?><a href="../table/listCompany.php">Companies</a><?php endif;?></li>
+                   <li> <?php if($_SESSION['company_id'] != 1):?><a href="../table/listTeams.php">Teams</a><?php endif;?></li>
+                <li><?php if($_SESSION['company_id'] != 1):?><a href="../table/listDocuments.php">Documents</a><?php endif;?></li>
+                   <li><?php if($_SESSION['company_id'] != 1):?><a href="../table/listClients.php">Clients</a><?php endif;?></li>
                 </ul>
             </li>
 

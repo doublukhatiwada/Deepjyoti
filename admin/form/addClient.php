@@ -1,63 +1,73 @@
 <?php
-    include 'php/session.php';
-    include '../class/database_table.php';
-    include '../connection/connect.php';
+    include '../php/session.php';
+    include '../../class/database_table.php';
+    include '../../connection/connect.php';
 
 
     $clients = new Database_Table('clients');
     $images = new Database_Table('images');
 
 
+    $i = '';
     $user_id = $_SESSION['user_id'];
 
-    if(isset($user_id == ''))
+    if(isset($user_id == null))
         header('../login.php');
 
     
   if(isset($_GET['edit'])){ 
-        if( $_FILES['image']['name'] != null){
         $find_query = $clients->findData('id', $_GET['edit']);
         $data = $find_query->fetch(); 
+        if(isset($_FILES['image'])){
          $find_image = $images->findData('id',$data["image_id"]);
-         $image_id = $find_image['id'];
+         $i = $find_image['id'];
         }
-        else{
-        $find_query = $clients->findData('id', $_GET['edit']);
-        $data = $find_query->fetch(); 
-        $image_id = '';
-        }
+        $i = '';
     }
     else{
   }
 
 
+
   if(isset($_POST['submit'])){ 
 
-    $count[] =images->findAlldata();
-    move_uploaded_file($_FILES['image']['tmp_name'], '../images/clients/' . basename($_FILES['image']['name']));
+     if(isset($_FILES['image'])){
+       
+        $count[] =$images->findAlldata();
+    move_uploaded_file($_FILES['image']['tmp_name'], '../../images/clients/' . basename($_FILES['image']['name']));
 
     $images1 = [
         'image_name' => $_FILES['image']['name'],
-        'image_type'=>"Client Image",
-        'id' = $images_id
+        'image_type'=>"Client's Image",
+        'id' => $i
     ];
    
-   $images->savedata($images1,$images_id);
+     $images->savedata($images1,$i);
 
-   $last_image = $images->findLastData();
-
+     $last_image = $images->findLastData();
+     $l_i = $last_image->fetch(); 
+   
     $values = [
         'id' => $_POST['id'],
         'fullname' => $_POST['full_name'], 
         'description' =>$_POST['description'],
         'company_id'=> $_SESSION['company_id'],
-        'image_id'=>$_POST[$last_image['id']]
+        'image_id'=>$_POST[$l_i['id']]
     ];
-  
+    }
+    else{
+        $values = [
+        'id' => $_POST['id'],
+        'fullname' => $_POST['full_name'], 
+        'description' =>$_POST['description'],
+        'company_id'=> $_SESSION['company_id']
+    ];
+
+    }
 
     $clients->savedata($values,'id');
 
-
+}
 ?>
 
 <!DOCTYPE html>
@@ -174,7 +184,7 @@
                                            for="teller_code"> Photo <span class="required">*</span>
                                     </label>
                                     <div class="col-md-6 col-sm-6 col-xs-12">
-                                        <input type="file"  class="form-control col-md-7 col-xs-12"  name="photo">
+                                        <input type="file"  class="form-control col-md-7 col-xs-12"  name="image">
                                     </div>
                                 </div>
 
@@ -183,7 +193,7 @@
                                     <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
                                         <button class="btn btn-primary" type="button">Cancel</button>
                                         <button class="btn btn-primary" type="reset">Reset</button>
-                                        <button type="submit" class="btn btn-success">Submit</button>
+                                        <input type="submit" name="submit" class="btn btn-primary"> 
                                     </div>
                                 </div>
 

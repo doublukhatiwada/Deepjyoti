@@ -1,34 +1,37 @@
 <?php
+  include 'admin/php/session.php';
   include 'connection/connect.php';
   include 'class/database_table.php';
 
   $info = 'log In';
  $users = new Database_Table('users'); 
- 
+
+ $companies = new Database_Table('companies');
+
+ $company = $companies->findAllData();
 
 if(isset($_POST['submit'])){
-  $uname = $_POST['username'];
-  $select_query= $users->findData('username',$uname);
+  $uname = $_POST['email'];
+  $select_query= $users->findData('email',$uname);
 
  if($select_query->rowCount()>0){ 
   $row=$select_query->fetch(); 
    $_SESSION = [
     'user_id'=>$row['id'], 
-    'username' => $_POST['username'], 
+    'email' => $_POST['email'], 
     'password' =>$_POST['password'], 
-    'user_firstname'=>$row['first_name'],
-    'company_id'=>$row['company_id']
+    'username'=>$row['first_name']." ".$row['last_name'],
+    'company_id'=>$row['c_id']
   ];
 
-
-    if( $_SESSION['username']==$row['username'] && password_verify($_SESSION['password'],$row['password'])&&($row['company_id']==1)){ 
-      header('Location:/Deepjyoti/admin/form/addUsers.php');
+    if( $_SESSION['email']==$row['email'] && password_verify($_SESSION['password'],$row['password'])&&($row['c_id']==1)){ 
+      header("Location:/Deepjyoti/admin/form/addUsers.php?id=".$_SESSION["company_id"]);
     }
-    elseif($_SESSION['username']==$row['username'] && password_verify($_SESSION['password'],$row['password'])){
-      header("Location:/Deepjyoti/admin/form/addUsers.php?$row['company_id']");
+    elseif($_SESSION['email']==$row['email'] && password_verify($_SESSION['password'],$row['password'])){
+      header("Location:/Deepjyoti/admin/form/addMessage.php?id=".$_SESSION["company_id"]);
     } 
     else
-     $info " Cannot Log In. Incorrect Username or password";   
+     $info = " Cannot Log In. Incorrect Username or password";   
  }
 else  $info = 'cannot log in . You are not a user.'; 
 }
@@ -68,19 +71,26 @@ else  $info = 'cannot log in . You are not a user.';
       <div class="login_wrapper">
         <div class="animate form login_form">
           <section class="login_content">
-            <form>
+            <div class="alert alert-success alert-dismissible fade in" role="alert">
+              <strong><?php echo $info;?> </strong>
+            </div>
+            <form method="post" action="login.php">
               <h1>Login Form</h1>
               <div>
-                <input type="text" class="form-control" placeholder="Company Name" name="company_id" />
+                <select name="company" class="form-control" style="margin-bottom:4%;">
+                 <?php foreach ($company as $get_query):?>
+                  <option value="<?php  echo $get_query['id']?>"><?php echo $get_query['company_name'];?></option>
+                  <?php endforeach;?>
+              </select>
               </div>
               <div>
-                <input type="text" class="form-control" placeholder="Username" required="" name="username" />
+                <input type="text" class="form-control" placeholder="Username" required="" name="email" />
               </div>
               <div>
                 <input type="password" class="form-control" placeholder="Password" required=""  name="password" />
               </div>
               <div>
-                  <button type="submit" name = "submit"class="btn btn-success">Login</button>
+                  <input type="submit" name = "submit" class="btn btn-success">
                 <!-- <a class="reset_pass" href="#">Lost your password?</a> -->
               </div>
 
@@ -95,8 +105,8 @@ else  $info = 'cannot log in . You are not a user.';
                 <br />
 
                 <div>
-                  <h1><i class="fa fa-paw"></i> Gentelella Alela!</h1>
-                  <p>©2016 All Rights Reserved. Gentelella Alela! is a Bootstrap 3 template. Privacy and Terms</p>
+                  <!-- <h1><i class="fa fa-paw"></i> Gentelella Alela!</h1> -->
+                  <p>©2016 All Rights Reserved. Privacy and Terms</p>
                 </div>
               </div>
             </form>

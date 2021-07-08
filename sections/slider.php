@@ -6,7 +6,7 @@
                     <li class="first">
                         <div class="slider-text-wrapper">  
                             <div class="container">
-                                <div class="big"> DeepJyoti Group of Companies</div>          
+                                <div class="big"> DEEPJYOTI</div>          
                                 <div class="small"></div>
                                 <a></a>
                             </div>       

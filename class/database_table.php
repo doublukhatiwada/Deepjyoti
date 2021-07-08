@@ -28,7 +28,6 @@
 	   }
 
 
-/
    function findData($column, $value) {
 	    global $pdo; 
 	    $select_query = $pdo->prepare('SELECT * FROM '.$this->table.' WHERE '.$column.'=:value'); // query to select all data.
@@ -85,7 +84,7 @@
 // function to fetch first data from table.
    function findLastData() {
 	    global $pdo; // global variable for database connection.
-	    $select_query = $pdo->prepare("SELECT * FROM   $this->table LIMIT 1 DESC"); // query to select first data.
+	    $select_query = $pdo->prepare("SELECT * FROM   $this->table ORDER BY id DESC LIMIT 1 "); // query to select first data.
 	    $select_query->execute(); // executing the query.
 	    return $select_query; // returning all value from query.
 	   }

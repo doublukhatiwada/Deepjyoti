@@ -6,7 +6,7 @@
                     <li class="first-1">
                         <div class="slider-text-wrapper">  
                             <div class="container">
-                                <div class="big"> DeepJyoti Group of Companies</div>          
+                                <div class="big"><?php echo $company['company_name']?></div>          
                                 <div class="small"></div>
                                 <a></a>
                             </div>       

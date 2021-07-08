@@ -5,11 +5,11 @@
     <div class="clearfix"></div>
 <div class="profile clearfix">
     <div class="profile_pic">
-        <img src="../images/logo.jpg}" alt="..." class="img-circle profile_img">
+        
     </div>
     <div class="profile_info">
         <span>Welcome,</span>
-        <h2>[[${name}]]</h2>
+        <h2><?php echo $_SESSION['username']?></h2>
     </div>
 </div>
 </div>
