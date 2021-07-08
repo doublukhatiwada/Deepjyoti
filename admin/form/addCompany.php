@@ -1,3 +1,68 @@
+<?php
+    include 'php/session.php';
+    include '../class/database_table.php';
+    include '../connection/connect.php';
+
+
+    $companies = new Database_Table('companies');
+    $images = new Database_Table('images');
+
+
+    $user_id = $_SESSION['user_id'];
+
+    if(isset($user_id == ''))
+        header('../login.php');
+
+    
+  if(isset($_GET['edit'])){ 
+        if( $_FILES['image']['name'] != null){
+        $find_query = $companies->findData('id', $_GET['edit']);
+        $data = $find_query->fetch(); 
+         $find_image = $images->findData('id',$data["logo"]);
+         $image_id = $find_image['id'];
+        }
+        else{
+        $find_query = $companies->findData('id', $_GET['edit']);
+        $data = $find_query->fetch(); 
+        $image_id = '';
+        }
+    }
+    else{
+  }
+
+
+  if(isset($_POST['submit'])){ 
+
+    $count[] =images->findAlldata();
+    move_uploaded_file($_FILES['image']['tmp_name'], '../images/company/' . basename($_FILES['image']['name']));
+
+    $images1 = [
+        'image_name' => $_FILES['image']['name'],
+        'image_type'=>"Company Logo",
+        'id' = $images_id
+    ];
+   
+   $images->savedata($images1,$images_id);
+
+   $last_image = $images->findLastData();
+
+    $values = [
+        'id' => $_POST['id'],
+        'company_name' => $_POST['company_name'], 
+        'address_1' =>$_POST['address_1'],
+        'address_2' =>$_POST['address_2'],
+        'address_3' =>$_POST['address_3'],
+        'address_4'=>$_POST['address_4'],
+        'email'=> $_POST['email'],
+        'contact' => $_POST['contact'],
+        'logo'=>$_POST[$last_image['id']]
+    ];
+  
+
+    $companies->savedata($values,'id');
+
+
+?>
 <!DOCTYPE html>
 <html lang="en" >
 <head>
@@ -87,10 +152,6 @@
                             <br />
                             <form id="demo-form2" data-parsley-validate class="form-horizontal form-label-left" method="post">
 
-                                    <div class="col-md-6 col-sm-6 col-xs-12" hidden="true">
-                                        <input  class="form-control col-md-7 col-xs-12" type="number"  name="id">
-                                        <input class="form-control col-md-7 col-xs-12" type="number"  name="id">
-                                    </div>
 
                                 <div class="form-group" >
                                     <label class="control-label col-md-3 col-sm-3 col-xs-12"

@@ -1,3 +1,33 @@
+<?php
+    include 'php/session.php';
+    include '../class/database_table.php';
+    include '../connection/connect.php';
+
+
+    $users = new Database_Table('users');
+
+    $user_id = $_SESSION['user_id'];
+
+    if(isset($user_id == ''))
+        header('../login.php');
+
+
+  if(isset($_POST['submit'])){ 
+
+    $data = $users->findData('id',$_POST['user_id']);
+
+    $values = [
+        'id' => $data['id'],
+        'company_id' => $_POST['company_id'],
+        'password'=> password_hash($data['first_name'].$data['last_name'],PASSWORD_DEFAULT)
+    ];
+  
+
+    $users->savedata($values,'id'); 
+
+
+?>
+
 <!DOCTYPE html>
 <html lang="en" >
 <head>
@@ -85,13 +115,13 @@
                         </div>
                         <div class="x_content">
                             <br />
-                            <form id="demo-form2" data-parsley-validate class="form-horizontal form-label-left" method="post">
+                            <form id="demo-form2" data-parsley-validate class="form-horizontal form-label-left" method="post" action="addUsers.php">
                                 <div class="form-group" >
                                     <label class="control-label col-md-3 col-sm-3 col-xs-12"
                                            for="teller_code"> User Name <span class="required">*</span>
                                     </label>
                                     <div class="col-md-6 col-sm-6 col-xs-12">
-                                    <select class="form-control col-md-7 col-xs-12"   name="user" required="true">
+                                    <select class="form-control col-md-7 col-xs-12"   name="user_id" required="true">
                                         <option  class="form-control col-md-7 col-xs-12">
                                         </option>
                                     </select>
@@ -104,7 +134,7 @@
                                            for="teller_code"> Company <span class="required">*</span>
                                     </label>
                                     <div class="col-md-6 col-sm-6 col-xs-12">
-                                    <select class="form-control col-md-7 col-xs-12"   name="company" required="true">
+                                    <select class="form-control col-md-7 col-xs-12"   name="company_id" required="true">
                                         <option  class="form-control col-md-7 col-xs-12">
                                         </option>
                                     </select>

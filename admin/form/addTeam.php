@@ -38,7 +38,6 @@
 
     $images1 = [
         'image_name' => $_FILES['image']['name'],
-        'user_id' => $_POST['id'],
         'image_type'=>"User Image",
         'id' = $images_id
     ];
@@ -152,19 +151,17 @@
                         </div>
                         <div class="x_content">
                             <br />
-                            <form id="demo-form2" data-parsley-validate class="form-horizontal form-label-left" method="post">
+                            
+                            <form id="demo-form2" data-parsley-validate class="form-horizontal form-label-left" method="post" action="addTeam.php">
 
-                                    <div class="col-md-6 col-sm-6 col-xs-12" hidden="true">
-                                        <input  class="form-control col-md-7 col-xs-12" type="number"  name="id">
-                                        <input class="form-control col-md-7 col-xs-12" type="number"  name="id">
-                                    </div>
+                                <input type="hidden" name="id" value="<?php if(isset($data['id'])) echo $data['id'];?>" />
 
                                 <div class="form-group" >
                                     <label class="control-label col-md-3 col-sm-3 col-xs-12"
                                            for="teller_code"> First Name <span class="required">*</span>
                                     </label>
                                     <div class="col-md-6 col-sm-6 col-xs-12">
-                                        <input  class="form-control col-md-7 col-xs-12" type="text"  name="first_name" required="true">
+                                        <input  class="form-control col-md-7 col-xs-12" type="text" value="<?php if(isset($data['first_name'])) echo $data['first_name'];?>" name="first_name" required="true">
                                     </div>
                                 </div>
 
@@ -173,7 +170,7 @@
                                            for="teller_code"> Middle Name <span class="required"></span>
                                     </label>
                                     <div class="col-md-6 col-sm-6 col-xs-12">
-                                        <input  class="form-control col-md-7 col-xs-12" type="text"  name="middle_name">
+                                        <input  class="form-control col-md-7 col-xs-12" type="text" value="<?php if(isset($data['middle_name'])) echo $data['middle_name'];?>"  name="middle_name">
                                     </div>
                                 </div>
 
@@ -182,7 +179,7 @@
                                            for="teller_code"> Last Name <span class="required">*</span>
                                     </label>
                                     <div class="col-md-6 col-sm-6 col-xs-12">
-                                        <input  class="form-control col-md-7 col-xs-12" type="text"  name="last_name" required="true">
+                                        <input  class="form-control col-md-7 col-xs-12" type="text" value="<?php if(isset($data['last_name'])) echo $data['last_name'];?>"  name="last_name" required="true">
                                     </div>
                                 </div>
 
@@ -191,8 +188,8 @@
                                            for="teller_code"> Gender <span class="required">*</span>
                                     </label>
                                     <select class="col-md-6 col-sm-6 col-xs-12" name="gender">
-                                        <option  class="form-control col-md-7 col-xs-12" type="text" value="male">Male</option>
-                                        <option  class="form-control col-md-7 col-xs-12" type="text" value="female">Female</option>
+                                        <option  class="form-control col-md-7 col-xs-12" type="text" value="male" <?php if(isset($data['gender'])) == "male" :?> selected = "selected" >Male</option>
+                                        <option  class="form-control col-md-7 col-xs-12" type="text" value="female"  <?php if(isset($data['gender'])) == "female" :?> selected = "selected">Female</option>
                                     </section>
                                 </div>
 
@@ -210,7 +207,7 @@
                                            for="teller_code"> Email <span class="required"></span>
                                     </label>
                                     <div class="col-md-6 col-sm-6 col-xs-12">
-                                        <input  class="form-control col-md-7 col-xs-12" type="email"  name="email">
+                                        <input  class="form-control col-md-7 col-xs-12" type="email"  name="email" value="<?php if(isset($data['email'])) echo $data['email'];?>" required = true >
                                     </div>
                                 </div>
 
@@ -219,7 +216,7 @@
                                            for="teller_code"> Contact No. <span class="required">*</span>
                                     </label>
                                     <div class="col-md-6 col-sm-6 col-xs-12">
-                                        <input  class="form-control col-md-7 col-xs-12" type="text"  name="contact" required="true">
+                                        <input  class="form-control col-md-7 col-xs-12" type="text"  name="contact" required="true" value="<?php if(isset($data['contact'])) echo $data['contact'];?>">
                                     </div>
                                 </div>
 

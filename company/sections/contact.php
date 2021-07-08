@@ -14,7 +14,7 @@
                     <div class="contact-info text-center">
                        <p>Govt License no. 652/063/064</p>
                        <p>Contact No - +977 01-4431447 </p>
-                       <p>Kathmandu-Dhumbarahi, Anandanagar, Marga</p>
+                       <p>Kathmandu-Dhumbarahi, Anandanagar Marga</p>
                        <p>House No : 120/21(A), Shrestha Niwas</p>
                        <p>deepjyotioverseas123@gmail.com</p>
                     </div>

@@ -1,3 +1,45 @@
+<?php
+    include 'php/session.php';
+    include '../class/database_table.php';
+    include '../connection/connect.php';
+
+    $images = new Database_Table('images');
+
+
+    $user_id = $_SESSION['user_id'];
+
+    if(isset($user_id == ''))
+        header('../login.php');
+
+    
+  if(isset($_GET['edit'])){ 
+         $find_image = $images->findData('id',$_GET['edit']);
+         $image_id = $find_image['id'];
+        }
+        else{
+        $image_id = '';
+        }
+    }
+    else{
+  }
+
+
+  if(isset($_POST['submit'])){ 
+
+    $count[] =images->findAlldata();
+    move_uploaded_file($_FILES['image']['tmp_name'], '../images/Documents/' . basename($_FILES['image']['name']));
+
+    $images1 = [
+        'image_name' => $_FILES['image']['name'],
+        'image_type'=>$_POST['document_name'],
+        'company_id'=> $_SESSION['company_id'],
+        'id' = $images_id
+    ];
+   
+   $images->savedata($images1,$images_id);
+
+?>
+
 <!DOCTYPE html>
 <html lang="en" >
 <head>
@@ -87,17 +129,12 @@
                             <br />
                             <form id="demo-form2" data-parsley-validate class="form-horizontal form-label-left" method="post">
 
-                                    <div class="col-md-6 col-sm-6 col-xs-12" hidden="true">
-                                        <input  class="form-control col-md-7 col-xs-12" type="number"  name="id">
-                                        <input class="form-control col-md-7 col-xs-12" type="number"  name="id">
-                                    </div>
-
                                 <div class="form-group" >
                                     <label class="control-label col-md-3 col-sm-3 col-xs-12"
                                            for="teller_code"> Document Name <span class="required">*</span>
                                     </label>
                                     <div class="col-md-6 col-sm-6 col-xs-12">
-                                        <input  class="form-control col-md-7 col-xs-12" type="text"  name="company_name" required="true">
+                                        <input  class="form-control col-md-7 col-xs-12" type="text"  name="document_name" required="true">
                                     </div>
                                 </div>
 
@@ -107,7 +144,7 @@
                                            for="teller_code"> Document<span class="required">*</span>
                                     </label>
                                     <div class="col-md-6 col-sm-6 col-xs-12">
-                                        <input type="file"  class="form-control col-md-7 col-xs-12"  name="logo">
+                                        <input type="file"  class="form-control col-md-7 col-xs-12"  name="document">
                                     </div>
                                 </div>
 

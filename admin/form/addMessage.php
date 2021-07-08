@@ -1,3 +1,42 @@
+<?php
+    include 'php/session.php';
+    include '../class/database_table.php';
+    include '../connection/connect.php';
+
+
+    $message= new Database_Table('messages');
+
+
+    $user_id = $_SESSION['user_id'];
+
+    if(isset($user_id == ''))
+        header('../login.php');
+
+    
+  if(isset($_GET['edit'])){ 
+        $find_query = $message->findData('id', $_GET['edit']);
+        $data = $find_query->fetch(); 
+        }
+    }
+    else{
+  }
+
+
+  if(isset($_POST['submit'])){ 
+
+    $values = [
+        'id' => $_POST['id'],
+        'company_id' => $_SESSION['company_id'], 
+        'description' =>$_POST['description'],
+        'given_by' =>$_POST['given_by'],
+        'position'=>$_POST['position']
+    ];
+  
+
+    $message->savedata($values,'id');
+
+
+?>
 <!DOCTYPE html>
 <html lang="en" >
 <head>
@@ -85,21 +124,17 @@
                         </div>
                         <div class="x_content">
                             <br />
-                            <form id="demo-form2" data-parsley-validate class="form-horizontal form-label-left" method="post">
-
-                                    <div class="col-md-6 col-sm-6 col-xs-12" hidden="true">
-                                        <input  class="form-control col-md-7 col-xs-12" type="number"  name="id">
-                                        <input class="form-control col-md-7 col-xs-12" type="number"  name="id">
-                                    </div>
-
+                            <form id="demo-form2" data-parsley-validate class="form-horizontal form-label-left" method="post" action="addMessage.php">
+                                    <input type="hidden" name="id" value="<?php if(isset($data['id'])) echo $data['id'];?>" />
 
                                   <div class="form-group" >
                                     <label class="control-label col-md-3 col-sm-3 col-xs-12"
                                            for="teller_code"> Description <span class="required"></span>
                                     </label>
                                     <div class="col-md-6 col-sm-6 col-xs-12">
-                                        <textarea class="form-control col-md-7 col-xs-12" type="text"  name="description">
-                                            
+                                        <textarea class="form-control col-md-7 col-xs-12" type="text"  name="description" required="true">
+
+                                        <?php if(isset($data['description'])) echo $data['description'];?>
                                         </textarea>
                                     </div>
                                 </div>
@@ -110,7 +145,7 @@
                                            for="teller_code"> Full Name <span class="required">*</span>
                                     </label>
                                     <div class="col-md-6 col-sm-6 col-xs-12">
-                                        <input  class="form-control col-md-7 col-xs-12" type="text"  name="given_by" required="true">
+                                        <input  class="form-control col-md-7 col-xs-12" type="text"  name="given_by" required="true" value="<?php if(isset($data['given_by'])) echo $data['given_by'];?>">
                                     </div>
                                 </div>
                             
@@ -120,7 +155,7 @@
                                            for="teller_code"> Designation<span class="required">*</span>
                                     </label>
                                     <div class="col-md-6 col-sm-6 col-xs-12">
-                                        <input  class="form-control col-md-7 col-xs-12" type="text"  name="position" required="true" placeholder="Managing Director">
+                                        <input  class="form-control col-md-7 col-xs-12" type="text"  name="position" required="true" placeholder="Managing Director" value="<?php if(isset($data['poition'])) echo $data['position'];?>">
                                     </div>
                                 </div>
                             </div>

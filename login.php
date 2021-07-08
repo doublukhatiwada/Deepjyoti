@@ -12,22 +12,23 @@ if(isset($_POST['submit'])){
 
  if($select_query->rowCount()>0){ 
   $row=$select_query->fetch(); 
-  // storing all value in session
    $_SESSION = [
     'user_id'=>$row['id'], 
     'username' => $_POST['username'], 
     'password' =>$_POST['password'], 
-    'user_firstname'=>$row['first_name'] 
+    'user_firstname'=>$row['first_name'],
+    'company_id'=>$row['company_id']
   ];
 
 
-    if(($row['username']=='admin' && $row['password']=='admin')|| $_SESSION['username']==$row['username'] && password_verify($_SESSION['password'],$row['password'])){ 
-         
-      header('Location:add_furniture');
+    if( $_SESSION['username']==$row['username'] && password_verify($_SESSION['password'],$row['password'])&&($row['company_id']==1)){ 
+      header('Location:/Deepjyoti/admin/form/addUsers.php');
     }
-    else{
-      $info = 'Username or Password Incorrect'; 
-    }    
+    elseif($_SESSION['username']==$row['username'] && password_verify($_SESSION['password'],$row['password'])){
+      header("Location:/Deepjyoti/admin/form/addUsers.php?$row['company_id']");
+    } 
+    else
+     $info " Cannot Log In. Incorrect Username or password";   
  }
 else  $info = 'cannot log in . You are not a user.'; 
 }
