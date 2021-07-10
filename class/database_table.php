@@ -39,6 +39,17 @@
 	    return $select_query; 
 	   }
 
+	    function findNotNulData($column, $value) {
+	    global $pdo; 
+	    $select_query = $pdo->prepare('SELECT * FROM '.$this->table.' WHERE '.$column.'!=:value'); // query to select all data.
+
+	    $criteria = [
+	            'value' => $value
+	        ];
+	    $select_query->execute($criteria); 
+	    return $select_query; 
+	   }
+
    function findSearchData($column, $value) {
 	    global $pdo;
 

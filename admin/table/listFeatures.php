@@ -1,25 +1,25 @@
 <?php
-      include '../php/session.php';
+    include '../php/session.php';
     include '../../class/database_table.php';
     include '../../connection/connect.php';
 
-    $users = new Database_Table('users');
 
-    
-    if(isset($_GET['del'])){
-        $users->deleteData('id',$_GET['del']);
+    $features = new Database_Table('features');
+  
 
-        $success = "!!!!!!!!!!!!!!!!!!Your Team has been Deleted!!!!!!!!!!!!";
-    }
+    $user_id = $_SESSION['user_id'];
 
-    $u = $users->findData('company_id',$_SESSION['company_id']);
-
-      $user_id = $_SESSION['user_id'];
-      $sn = 1;
+    $sn = 0;
     
     if($user_id == '')
         header('../login.php');
 
+     if(isset($_GET['del'])){
+        $features->deleteData('id',$_GET['del']);
+        $success = "!!!!!!!!!!!!!!!!!!Your Company's Fetaure has been Deleted!!!!!!!!!!!!";
+    }
+
+    $f = $features->findData('company_id',$_SESSION['company_id']);
 ?>
 
 <!DOCTYPE html>
@@ -31,7 +31,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Teams List</title>
+    <title>Company List</title>
 
     <!-- Bootstrap -->
     <link href="../vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -86,7 +86,7 @@
                 </div>
 
                 <div class="clearfix"></div>
-                <?php if (isset($_GET['del'])):?>
+           <?php if (isset($_GET['del'])):?>
             <div  class="alert alert-success alert-dismissible fade in" role="alert">
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span>
                 </button>
@@ -94,16 +94,11 @@
             </div>
         <?php endif;?>
 
-            <!-- <div th:if="${errormsg!=null}" class="alert alert-danger alert-dismissible fade in" role="alert">
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span>
-                </button>
-                <strong th:text="${errormsg}"></strong>
-            </div> -->
 
                     <div class="col-md-12 col-sm-12 col-xs-12">
                         <div class="x_panel">
                             <div class="x_title">
-                                <h2>Teams List<small>List of all teams under your company.</small></h2>
+                                <h2>Company List<small>List of all companies under your organization.</small></h2>
                                 <ul class="nav navbar-right panel_toolbox">
                                     <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                                     </li>
@@ -124,30 +119,26 @@
                             <div class="x_content">
                                 <p class="text-muted font-13 m-b-30">
                                 </p>
-                                <div style="display:flex;"> <h5>Quick Action:<a  style="margin-left:10px;" href="../form/addTeam.php"> Add New Team </a></h5>
+                                <div style="display:flex;"> <h5>Quick Action:<a  style="margin-left:10px;" href="../form/addFeature.php"> Add New Features </a></h5>
                                 </div>
                                 <table id="datatable-buttons" class="table table-striped table-bordered">
                                     <thead>
                                     <tr>
                                         <th>S.N.</th>
-                                        <th>Full Name</th>
-                                        <th>Email</th>
-                                        <th>Contact</th>
-                                        <th>Gender</th>
+                                        <th>Title</th>
+                                        <th>Description</th>
                                     </tr>
                                     </thead>
 
 
                                     <tbody>
-                                     <?php foreach ($u as $a): ?>
-                                    <tr data-href="../form/addTeam.php?edit=<?php echo $a['id']?>">
-                                        <td><?php echo $sn++ ?></td>
-                                        <td><?php echo $a['first_name']." ".$a['middle_name']." ".$a['last_name'];?></td>
-                                        <td><?php echo $a['email']?></td>
-                                        <td><?php echo $a['contact']?></td>
-                                        <td><?php echo $a['gender']?></td>
+                                    <?php foreach ($f as $a):?>
+                                    <tr data-href="../form/addFeature.php?edit=<?php echo $a['id']?>">
+                                        <td><?php echo ++$sn?></td>
+                                        <td><?php echo $a['title']?></td>
+                                        <td><?php echo $a['description']?></td>
                                     </tr>
-                                     <?php endforeach; ?> 
+                                <?php endforeach;?>
                                     </tbody>
                                 </table>
                             </div>
@@ -155,30 +146,6 @@
                     </div>
         </div>
     </div>
-
-        <!-- /page content -->
-    <!-- /page content -->
-    <!--            modal -->
-    <div class="modal fade" id="error" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel"> Foreign Key Constraint Error</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body" id="modal-body" th:switch="${error != null}">
-                    <p th:case="${true}">[[${error}]]</p>
-                </div>
-                <div class="modal-footer">
-
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!--         / modal-->
 
 
     <!-- footer content -->

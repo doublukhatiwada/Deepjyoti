@@ -5,24 +5,27 @@
     include '../../connection/connect.php';
 
     $message= new Database_Table('messages');
+    $images = new Database_Table('images');
 
     $i = '';
     $user_id = $_SESSION['user_id'];
 
-    if(isset($user_id == null))
+    if($user_id == null)
         header('../login.php');
 
     
   if(isset($_GET['edit'])){ 
         $find_query = $message->findData('company_id', $_GET['edit']);
         $data = $find_query->fetch(); 
-         if(isset($_FILES['image'])){
-         $find_image = $images->findData('id',$data["image_id"]);
-         $i = $find_image['id'];
-        }
+         $images_get = $images->findData('id',$data['image_id']);
+        $images_set = $images_get->fetch();
+       if(isset($data['image_id'] ) == 0)
         $i = '';
+        else
+            $i = $data['image_id'];
+    
     }
-        }
+    
     
     else{
   }
@@ -65,7 +68,7 @@
     ];
 
   }
-
+  header("Location:../form/addMessage.php?edit=".$_SESSION['company_id']);
     $message->savedata($values,'id');
 
 }
@@ -140,14 +143,11 @@
                     <div class="x_panel">
                         <div class="x_title">
                             <div>
-                            <!-- <div th:switch="${del != null OR archived != null}"> -->
-                                <!-- <h2 > User Name here <small> Related Company here</small></h2> -->
+                         
                                 <h2>Add Chairman's/Director's/ CEO's Message<small>in your company</small></h2>
                             </div>
                             <ul class="nav navbar-right panel_toolbox">
-                                <!-- <li th:switch="${del != null}">
-                                    <button style="border:none"  data-target="#error" data-toggle="modal"><img style="height: 30px; width:50px; float:right;margin-left:70%" th:case="${true}" th:src="@{/images/delete.png}"></button>
-                                </li> -->
+                               
                                 <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                                 </li>
                                 <li><a class="close-link"><i class="fa fa-close"></i></a>
@@ -157,7 +157,13 @@
                         </div>
                         <div class="x_content">
                             <br />
-                            <form id="demo-form2" data-parsley-validate class="form-horizontal form-label-left" method="post" action="addMessage.php">
+                             <?php if(isset($data['id'])):?>
+                            <div>
+                               <a href="../../images/company/<?php echo $images_set['image_name']?>" target="_blank"> <img style="height: 150px; width:150px; float:right;margin-left:98%" src="../../images/company/<?php echo $images_set['image_name']?>" alt="....Image is being loaded...."></a>
+                            </div>
+                        <?php endif;?>
+                            
+                            <form id="demo-form2" data-parsley-validate class="form-horizontal form-label-left" method="post" action="addMessage.php" enctype="multipart/form-data">
                                     <input type="hidden" name="id" value="<?php if(isset($data['id'])) echo $data['id'];?>" />
 
                                   <div class="form-group" >
@@ -189,7 +195,7 @@
                                         <input  class="form-control col-md-7 col-xs-12" type="text"  name="position" required="true" placeholder="Managing Director" value="<?php if(isset($data['position'])) echo $data['position'];?>">
                                     </div>
                                 </div>
-                            </div>
+                           
 
                             <div class="form-group" >
                                     <label class="control-label col-md-3 col-sm-3 col-xs-12"

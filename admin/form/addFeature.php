@@ -2,46 +2,33 @@
     include '../php/session.php';
     include '../../class/database_table.php';
     include '../../connection/connect.php';
-    $users = new Database_Table('users');
-    $companies = new Database_Table('companies');
 
+    $features= new Database_Table('features');
 
+    $i = '';
     $user_id = $_SESSION['user_id'];
-    
-    if($user_id == '')
+
+    if($user_id == null)
         header('../login.php');
 
-    $unsigned_user = $users->findData('password','');
-    $com = $companies->findAllData();
-
-    if(isset($_GET['edit'])){
-        $user = $users->findData('id',$_GET['edit']);
-        $eu = $user->fetch();
-
-        $company = $companies->findData('id',$eu['company_id']);
-        $ec = $company->fetch();
+     if(isset($_GET['edit'])){ 
+        $find_query = $features->findData('id', $_GET['edit']);
+        $data = $find_query->fetch(); 
     }
-
-
+    else{
+  }
   if(isset($_POST['submit'])){ 
-
-
-    $data = $users->findData('id',$_POST['user_id']);
-    $r = $data->fetch();
-
-    $values = [
-        'id' => $r['id'],
-        'type'=>"admin",
-        'c_id' => $_POST['company_id'],
-        'password'=> password_hash($r['first_name'].$r['last_name'],PASSWORD_DEFAULT)
+     $values = [
+        'id' => $_POST['id'],
+        'title' => $_POST['title'], 
+        'description'=>$_POST['description'],
+        'company_id'=>$_SESSION['company_id']   
     ];
-  
 
-    $users->savedata($values,'id'); 
+    $features->savedata($values,'id');
+     header('Location:../table/listFeatures.php');
+  }
 
-    header('Location:../table/listUsers.php');
-
-}
 ?>
 
 <!DOCTYPE html>
@@ -54,7 +41,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="images/favicon.ico" type="image/ico" />
 
-    <title>User Addition Form </title>
+    <title>Team Addition Form </title>
 
     <!-- Bootstrap -->
     <link href="../vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -114,17 +101,14 @@
                     <div class="x_panel">
                         <div class="x_title">
                             <div>
-                             <div>
                             <?php if (isset($data['id'])):?>
-                            <h2> <?php echo $data ['first_name']." ".$data['last_name'];?></h2>
+                            <h2> <?php echo $data ['title']?></h2>
                             <?php else:?>
-                              <h2>Add User<small>to your company</small></h2>
+                                <h2>Add Feature<small>to your company</small></h2>
                             <?php endif;?>
                             </div>
-                                
-                            </div>
                             <ul class="nav navbar-right panel_toolbox">
-                                 <?php if(isset($_GET['edit'])):?>
+                                <?php if(isset($_GET['edit'])):?>
                                 <li >
                                     <button style="border:none"  data-target="#error" data-toggle="modal"><img style="height: 30px; width:50px; float:right;margin-left:70%" src="../images/delete.png"></button>
                                 </li>
@@ -138,44 +122,26 @@
                         </div>
                         <div class="x_content">
                             <br />
-                            <form id="demo-form2" data-parsley-validate class="form-horizontal form-label-left" method="post" action="addUsers.php">
+                            <form id="demo-form2" data-parsley-validate class="form-horizontal form-label-left" method="post" action="addFeature.php">
+
+                                <input type="hidden" name="id" value="<?php if(isset($data['id'])) echo $data['id'];?>" />
+
                                 <div class="form-group" >
                                     <label class="control-label col-md-3 col-sm-3 col-xs-12"
-                                           for="teller_code"> User Name <span class="required">*</span>
+                                           for="teller_code"> Title <span class="required">*</span>
                                     </label>
                                     <div class="col-md-6 col-sm-6 col-xs-12">
-                                    <select class="form-control col-md-7 col-xs-12"   name="user_id">
-                                        <?php if(isset($eu['id'])):?>
-                                             <option class="form-control col-md-7 col-xs-12" value="<?php echo $eu['id'] ?>"><?php echo $eu['first_name'].' '.$eu['last_name']?></option>
-                                        <?php else:?>
-                                        <?php foreach ($unsigned_user as $a):?>
-                                        <option class="form-control col-md-7 col-xs-12" value="<?php echo $a['id'] ?>"><?php echo $a['first_name'].' '.$a['last_name']?></option>
-                                    <?php endforeach;?>
-                                <?php endif;?>
-                                    </select>
+                                        <input  class="form-control col-md-7 col-xs-12" type="text"  value="<?php if(isset($data['title'])) echo $data['title'];?>"  name="title" required="true">
                                     </div>
                                 </div>
-                            
 
-                                  <div class="form-group" >
+                                <div class="form-group" >
                                     <label class="control-label col-md-3 col-sm-3 col-xs-12"
-                                           for="teller_code"> Company <span class="required">*</span>
+                                           for="teller_code"> Description <span class="required">*</span>
                                     </label>
                                     <div class="col-md-6 col-sm-6 col-xs-12">
-                                    <select class="form-control col-md-7 col-xs-12" name="company_id">
-                                        <?php if(isset($eu['id'])):?>
-                                             <option class="form-control col-md-7 col-xs-12" value="<?php  echo $ec['id'] ?>"><?php echo $ec['company_name']?></option>
-                    
-                                        <?php foreach ($com as $b):?>
-                                        <option class="form-control col-md-7 col-xs-12" value="<?php echo $b['id'] ?>;"><?php echo $b['company_name']?></option>
-                                    <?php endforeach;?>
-                                    <?php endif;?>
-                                    <?php if(!isset($eu['id'])):?>
-                                    <?php foreach ($com as $b):?>
-                                        <option class="form-control col-md-7 col-xs-12" value="<?php echo $b['id'] ?>;"><?php echo $b['company_name']?></option>
-                                    <?php endforeach;?>
-                                    <?php endif;?>
-                                    </select>
+                                        <textarea class="form-control col-md-7 col-xs-12" type="text"  name="description" required="true"><?php if(isset($data['description'])) echo $data['description'];?>
+                                        </textarea>
                                     </div>
                                 </div>
 
@@ -196,7 +162,7 @@
             <br />
         </div>
 
-         <!-- /page content -->
+          <!-- /page content -->
         <div class="modal fade" id="error" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -212,13 +178,14 @@
                         </p>
                     </div>
                     <div class="modal-footer">
-                        <a href="../table/listUsers.php?del=<?php echo $eu['id']?>"><button type="button" class="btn btn-primary">Save changes</button></a>
+                        <a href="../table/listFeatures.php?del=<?php echo $data['id']?>"><button type="button" class="btn btn-primary">Save changes</button></a>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
         </div>
         <!--         / modal-->
+        
         
 
         <!-- footer content -->

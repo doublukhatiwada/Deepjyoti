@@ -4,7 +4,7 @@
             <div class="row">
             
                  <div class="title-box text-center">
-                    <h2 class="title">Services</h2>
+                    <h2 class="title">Documents</h2>
                  </div>
               
                <!--Services Item-->

@@ -6,32 +6,38 @@
 
     $users = new Database_Table('users');
 
-    // $user_id = $_SESSION['user_id'];
+    $user_id = $_SESSION['user_id'];
 
-    // if(isset($user_id == ''))
-    //     header('../login.php');
+    if($user_id == '')
+        header('../login.php');
 
 
   if(isset($_POST['submit'])){ 
 
     $data = $users->findData('id',$_SESSION['user_id']);
     $d = $data->fetch();
-
-    if(password_hash($_POST['c_password'],PASSWORD_DEFAULT)!== $d['password']){
+    if(! password_verify($_POST['c_password'],$d['password'])){
         $info = "!!!!Please enter valid correct password!!!!";
     }
 
-    if(isset($_POST['n_password']) == $_POST['cn_password']){
+     if($_POST['n_password'] != $_POST['cn_password']){
+        $info = "!!!!!Please Confirm Your password!!!!!";
+    }
+
+
+    if(($_POST['n_password'] == $_POST['cn_password'])&&(password_verify($_POST['c_password'],$d['password']))){
 
     $values = [
         'id' => $d['id'],
         'password'=> password_hash($_POST['n_password'],PASSWORD_DEFAULT)
     ];
-    }
-    else
-        $info = "!!!!!Please Confirm Your password!!!!!";
 
-    $users->savedata($values,'id'); 
+     $users->savedata($values,'id'); 
+    $info = " Your Passowrd has been changed";
+    }
+   
+
+
 }
 
 ?>
@@ -105,15 +111,28 @@
                 <div class="col-md-12 col-sm-12 col-xs-12">
                     <div class="x_panel">
                         <div class="x_title">
+
+                        <div class="clearfix"></div>
+
+                         <?php if (isset($info)):?>
+                    <div  class="alert alert-success alert-dismissible fade in" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span>
+                    </button>
+                    <strong><?php echo $info?></strong>
+                    </div>
+                    <?php endif;?>
+                    <?php if (isset($success)):?>
+                    <div  class="alert alert-success alert-dismissible fade in" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span>
+                    </button>
+                    <strong><?php echo $success?></strong>
+                    </div>
+                 <?php endif;?>
+
                             <div>
-                            <!-- <div th:switch="${del != null OR archived != null}"> -->
-                                <!-- <h2 > User Name here <small> Related Company here</small></h2> -->
                                 <h2>Change Password<small></small></h2>
                             </div>
                             <ul class="nav navbar-right panel_toolbox">
-                                <!-- <li th:switch="${del != null}">
-                                    <button style="border:none"  data-target="#error" data-toggle="modal"><img style="height: 30px; width:50px; float:right;margin-left:70%" th:case="${true}" th:src="@{/images/delete.png}"></button>
-                                </li> -->
                                 <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                                 </li>
                                 <li><a class="close-link"><i class="fa fa-close"></i></a>
@@ -130,7 +149,7 @@
                                            for="teller_code"> Current Password  <span class="required">*</span>
                                     </label>
                                     <div class="col-md-6 col-sm-6 col-xs-12">
-                                        <input  class="form-control col-md-7 col-xs-12" type="text"  name="c_password" required="true">
+                                        <input  class="form-control col-md-7 col-xs-12" type="Password"  name="c_password" required="true">
                                     </div>
                                 </div>
 
@@ -139,7 +158,7 @@
                                            for="teller_code"> New Password  <span class="required">*</span>
                                     </label>
                                     <div class="col-md-6 col-sm-6 col-xs-12">
-                                        <input  class="form-control col-md-7 col-xs-12" type="text"  name="n_password" required="true">
+                                        <input  class="form-control col-md-7 col-xs-12" type="Password"  name="n_password" required="true">
                                     </div>
                                 </div>
 
@@ -148,7 +167,7 @@
                                            for="teller_code"> Confirm Password  <span class="required">*</span>
                                     </label>
                                     <div class="col-md-6 col-sm-6 col-xs-12">
-                                        <input  class="form-control col-md-7 col-xs-12" type="text"  name="cn_password" required="true">
+                                        <input  class="form-control col-md-7 col-xs-12" type="Password"  name="cn_password" required="true">
                                     </div>
                                 </div>
 

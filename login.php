@@ -16,12 +16,15 @@ if(isset($_POST['submit'])){
 
  if($select_query->rowCount()>0){ 
   $row=$select_query->fetch(); 
+  $c = $companies->findData('id',$row['company_id']);
+  $cc = $c->fetch();
    $_SESSION = [
     'user_id'=>$row['id'], 
     'email' => $_POST['email'], 
     'password' =>$_POST['password'], 
     'username'=>$row['first_name']." ".$row['last_name'],
-    'company_id'=>$row['c_id']
+    'company_id'=>$row['c_id'],
+    'company_name'=>$cc['company_name']
   ];
 
     if( $_SESSION['email']==$row['email'] && password_verify($_SESSION['password'],$row['password'])&&($row['c_id']==1)){ 

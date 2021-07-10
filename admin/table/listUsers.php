@@ -1,3 +1,35 @@
+<?php
+     include '../php/session.php';
+    include '../../class/database_table.php';
+    include '../../connection/connect.php';
+    $users = new Database_Table('users');
+    $companies = new Database_Table('companies');
+
+
+    $user_id = $_SESSION['user_id'];
+    
+    if($user_id == '')
+        header('../login.php');
+
+    if(isset($_GET['del'])){
+         $data = $users->findData('id',$_GET['del']);
+        $r = $data->fetch();
+
+    $values = [
+        'id' => $r['id'],
+        'type'=>"",
+        'c_id' => '',
+        'password'=> ''
+    ];
+  
+    $users->savedata($values,'id'); 
+        $success = "!!!!!!!!!!!!!!!!!!Your User has been Deleted!!!!!!!!!!!!";
+    }
+
+    $sn = 1;
+    $user = $users->findNotNulData('password','');
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -62,18 +94,13 @@
                 </div>
 
                 <div class="clearfix"></div>
-           <!--  <div if="${success!=null}" class="alert alert-success alert-dismissible fade in" role="alert">
+            <?php if (isset($_GET['del'])):?>
+            <div  class="alert alert-success alert-dismissible fade in" role="alert">
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span>
                 </button>
-                <strong text="${success}"></strong>
-            </div> -->
-
-            <!-- <div th:if="${errormsg!=null}" class="alert alert-danger alert-dismissible fade in" role="alert">
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span>
-                </button>
-                <strong th:text="${errormsg}"></strong>
-            </div> -->
-
+                <strong><?php echo $success?></strong>
+            </div>
+        <?php endif;?>
                     <div class="col-md-12 col-sm-12 col-xs-12">
                         <div class="x_panel">
                             <div class="x_title">
@@ -98,7 +125,7 @@
                             <div class="x_content">
                                 <p class="text-muted font-13 m-b-30">
                                 </p>
-                                <div style="display:flex;"> <h5>Quick Action:<a  style="margin-left:10px;" href="../admin/dashboard/addBranch"> Add New Users </a></h5>
+                                <div style="display:flex;"> <h5>Quick Action:<a  style="margin-left:10px;" href="../form/addUsers.php"> Add New Users </a></h5>
                                 </div>
                                 <table id="datatable-buttons" class="table table-striped table-bordered">
                                     <thead>
@@ -114,15 +141,17 @@
 
 
                                     <tbody>
-
-                                    <tr data-href="'/admin/dashboard/updateBranchData/'+ ${b.branch_code}">
-                                        <td>S.N.</td>
-                                        <td>Full Name</td>
-                                        <td>Email</td>
-                                        <td>Contact</td>
-                                        <td>Gender</td>
-                                         <td>Associate Company</td>
+                                        <?php foreach($user as $u):?>
+                                        
+                                    <tr data-href="../form/addUsers.php?edit=<?php echo $u['id']?>">
+                                        <td><?php echo $sn++;?></td>
+                                        <td><?php echo $u['first_name'].' '.$u['middle_name'].' '.$u['last_name'];?></td>
+                                        <td><?php echo $u['email'];?></td>
+                                        <td><?php echo $u['gender'];?></td>
+                                        <td><?php echo $u['email'];?></td>
+                                         <td><?php echo $u['company_id'];?></td>
                                     </tr>
+                                    <?php endforeach;?>
                                     </tbody>
                                 </table>
                             </div>
@@ -134,7 +163,7 @@
         <!-- /page content -->
     <!-- /page content -->
     <!--            modal -->
-  <!--   <div class="modal fade" id="error" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="error" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -152,7 +181,7 @@
                 </div>
             </div>
         </div>
-    </div> -->
+    </div>
     <!--         / modal-->
 
 

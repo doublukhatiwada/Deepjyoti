@@ -17,11 +17,12 @@
   if(isset($_GET['edit'])){ 
         $find_query = $users->findData('id', $_GET['edit']);
         $data = $find_query->fetch(); 
-        if(isset($_FILES['image'])){
-         $find_image = $images->findData('id',$data["image_id"]);
-         $i = $find_image['id'];
-        }
+        $images_get = $images->findData('id',$data['image_id']);
+        $images_set = $images_get->fetch();
+       if(isset($data['image_id'] ) == 0)
         $i = '';
+        else
+            $i = $data['image_id'];
     }
     else{
   }
@@ -29,9 +30,7 @@
 
   if(isset($_POST['submit'])){ 
 
-    if(isset($_FILES['image'])){
-       
-        $count[] =$images->findAlldata();
+    if($_FILES['image']['name']!=""){
     move_uploaded_file($_FILES['image']['tmp_name'], '../../images/team/' . basename($_FILES['image']['name']));
 
     $images1 = [
@@ -75,6 +74,8 @@
     }
 
     $users->savedata($values,'id');
+
+     header('Location:../table/listTeams.php');
 
 }
 ?>
@@ -149,14 +150,18 @@
                     <div class="x_panel">
                         <div class="x_title">
                             <div>
-                            <!-- <div th:switch="${del != null OR archived != null}"> -->
-                                <!-- <h2 > User Name here <small> Related Company here</small></h2> -->
+                            <?php if (isset($data['id'])):?>
+                            <h2> <?php echo $data ['first_name']." ".$data['last_name'];?></h2>
+                            <?php else:?>
                                 <h2>Add Team<small>to your company</small></h2>
+                            <?php endif;?>
                             </div>
                             <ul class="nav navbar-right panel_toolbox">
-                                <!-- <li th:switch="${del != null}">
-                                    <button style="border:none"  data-target="#error" data-toggle="modal"><img style="height: 30px; width:50px; float:right;margin-left:70%" th:case="${true}" th:src="@{/images/delete.png}"></button>
-                                </li> -->
+                                <?php if(isset($_GET['edit'])):?>
+                                <li >
+                                    <button style="border:none"  data-target="#error" data-toggle="modal"><img style="height: 30px; width:50px; float:right;margin-left:70%" src="../images/delete.png"></button>
+                                </li>
+                            <?php endif;?>
                                 <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                                 </li>
                                 <li><a class="close-link"><i class="fa fa-close"></i></a>
@@ -166,8 +171,15 @@
                         </div>
                         <div class="x_content">
                             <br />
+                            <?php if(isset($data['id'])):?>
+                            <div>
+                               <a href="../../images/team/<?php echo $images_set['image_name']?>" target="_blank"> <img style="height: 150px; width:150px; float:right;margin-left:98%" src="../../images/team/<?php echo $images_set['image_name']?>" alt="....Image is being loaded...."></a>
+                            </div>
+                        <?php endif;?>
                             
                             <form id="demo-form2" data-parsley-validate class="form-horizontal form-label-left" method="post" action="addTeam.php" enctype="multipart/form-data">
+
+
 
                                 <input type="hidden" name="id" value="<?php if(isset($data['id'])) echo $data['id'];?>" />
 
@@ -204,8 +216,11 @@
                                     </label>
                                     <div class="col-md-6 col-sm-6 col-xs-12">
                                     <select class="form-control" name="gender">
-                                        <option  class="form-control col-md-7 col-xs-12" value="male" <?php if(isset($data['gender']) == "male") :?> selected = "selected" <?php endif; ?> >Male</option>
-                                        <option  class="form-control col-md-7 col-xs-12"  value="female"  <?php if(isset($data['gender']) == "female") :?> selected = "selected" <?php endif; ?>>Female</option>
+                                        <?php if(isset ($data['gender'])):?>
+                                    <option class="form-control col-md-7 col-xs-12" value="<?php echo $data['gender'];?>" selected= "true"><?php echo $data['gender'];?></option>
+                                        <?php endif;?>
+                                        <option  class="form-control col-md-7 col-xs-12" value="male">Male</option>
+                                       <option  class="form-control col-md-7 col-xs-12" value="male">Female</option>
                                     </select>
                                 </div>
 
@@ -254,6 +269,30 @@
             </div>
             <br />
         </div>
+
+         <!-- /page content -->
+        <div class="modal fade" id="error" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Please Confirm Deletion</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p name="error">
+                            Are you Sure?
+                        </p>
+                    </div>
+                    <div class="modal-footer">
+                        <a href="../table/listTeams.php?del=<?php echo $data['id']?>"><button type="button" class="btn btn-primary">Save changes</button></a>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--         / modal-->
         
 
         <!-- footer content -->

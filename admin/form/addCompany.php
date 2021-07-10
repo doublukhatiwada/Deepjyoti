@@ -7,35 +7,35 @@
     $companies = new Database_Table('companies');
     $images = new Database_Table('images');
 
+
     $i = '';
     $user_id = $_SESSION['user_id'];
 
-    if(isset($user_id == null))
+    if($user_id == null)
         header('../login.php');
 
     
   if(isset($_GET['edit'])){ 
         $find_query = $companies->findData('id', $_GET['edit']);
         $data = $find_query->fetch(); 
-        if(isset($_FILES['image'])){
-         $find_image = $images->findData('id',$data["image_id"]);
-         $i = $find_image['id'];
-        }
+        $images_get = $images->findData('id',$data['logo']);
+        $images_set = $images_get->fetch();
+       if(isset($data['image_id'] ) == 0)
         $i = '';
+        else
+            $i = $data['image_id'];
     }
     else{
   }
 
   if(isset($_POST['submit'])){ 
 
-      if(isset($_FILES['image'])){
-       
-        $count[] =$images->findAlldata();
-    move_uploaded_file($_FILES['image']['tmp_name'], '../../images/team/' . basename($_FILES['image']['name']));
+       if($_FILES['image']['name']!=""){
+    move_uploaded_file($_FILES['image']['tmp_name'], '../../images/company/' . basename($_FILES['image']['name']));
 
     $images1 = [
         'image_name' => $_FILES['image']['name'],
-        'image_type'=>"Company Logo",
+        'image_type'=>"Company's Logo",
         'id' => $i
     ];
    
@@ -43,7 +43,6 @@
 
      $last_image = $images->findLastData();
      $l_i = $last_image->fetch(); 
-
     $values = [
         'id' => $_POST['id'],
         'company_name' => $_POST['company_name'], 
@@ -53,7 +52,7 @@
         'address_4'=>$_POST['address_4'],
         'email'=> $_POST['email'],
         'contact' => $_POST['contact'],
-        'logo'=>$_POST[$_i['id']]
+        'logo'=>$l_i['id']
     ];
   }
   else{
@@ -71,6 +70,8 @@
   }
 
     $companies->savedata($values,'id');
+
+    header('Location:../table/listCompany.php');
 }
 
 ?>
@@ -144,14 +145,18 @@
                     <div class="x_panel">
                         <div class="x_title">
                             <div>
-                            <!-- <div th:switch="${del != null OR archived != null}"> -->
-                                <!-- <h2 > User Name here <small> Related Company here</small></h2> -->
-                                <h2>Add Company<small>in Your Organization</small></h2>
+                             <?php if (isset($data['id'])):?>
+                            <h2> <?php echo $data ['company_name'];?></h2>
+                            <?php else:?>
+                                 <h2>Add Company<small>in Your Organization</small></h2>
+                            <?php endif;?>
                             </div>
                             <ul class="nav navbar-right panel_toolbox">
-                                <!-- <li th:switch="${del != null}">
-                                    <button style="border:none"  data-target="#error" data-toggle="modal"><img style="height: 30px; width:50px; float:right;margin-left:70%" th:case="${true}" th:src="@{/images/delete.png}"></button>
-                                </li> -->
+                              <?php if(isset($_GET['edit'])):?>
+                                <li >
+                                    <button style="border:none"  data-target="#error" data-toggle="modal"><img style="height: 30px; width:50px; float:right;margin-left:70%" src="../images/delete.png"></button>
+                                </li>
+                            <?php endif;?>
                                 <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                                 </li>
                                 <li><a class="close-link"><i class="fa fa-close"></i></a>
@@ -161,15 +166,21 @@
                         </div>
                         <div class="x_content">
                             <br />
-                            <form id="demo-form2" data-parsley-validate class="form-horizontal form-label-left" method="post">
 
+                              <?php if(isset($data['id'])):?>
+                            <div>
+                               <a href="../../images/company/<?php echo $images_set['image_name']?>" target="_blank"> <img style="height: 150px; width:150px; float:right;margin-left:98%" src="../../images/company/<?php echo $images_set['image_name']?>" alt="....Image is being loaded...."></a>
+                            </div>
+                        <?php endif;?>
+                            <form id="demo-form2" data-parsley-validate class="form-horizontal form-label-left" method="post" enctype="multipart/form-data">
+                                 <input type="hidden" name="id" value="<?php if(isset($data['id'])) echo $data['id'];?>" />
 
                                 <div class="form-group" >
                                     <label class="control-label col-md-3 col-sm-3 col-xs-12"
                                            for="teller_code"> Company Name <span class="required">*</span>
                                     </label>
                                     <div class="col-md-6 col-sm-6 col-xs-12">
-                                        <input  class="form-control col-md-7 col-xs-12" type="text"  name="company_name" required="true">
+                                        <input  class="form-control col-md-7 col-xs-12" type="text"  value="<?php if(isset($data['company_name'])) echo $data['company_name'];?>"  name="company_name" required="true">
                                     </div>
                                 </div>
 
@@ -178,7 +189,7 @@
                                            for="teller_code"> Address <span class="required"></span>
                                     </label>
                                     <div class="col-md-6 col-sm-6 col-xs-12">
-                                        <input  class="form-control col-md-7 col-xs-12" type="text"  name="address">
+                                        <input  class="form-control col-md-7 col-xs-12" type="text"  value="<?php if(isset($data['address_1'])) echo $data['address_1'];?>"   name="address_1">
                                     </div>
                                 </div>
 
@@ -187,7 +198,7 @@
                                            for="teller_code"> District <span class="required">*</span>
                                     </label>
                                     <div class="col-md-6 col-sm-6 col-xs-12">
-                                        <input  class="form-control col-md-7 col-xs-12" type="text"  name="district" required="true">
+                                        <input  class="form-control col-md-7 col-xs-12" type="text"  value="<?php if(isset($data['address_2'])) echo $data['address_2'];?>"   name="address_2" required="true">
                                     </div>
                                 </div>
 
@@ -196,7 +207,7 @@
                                            for="teller_code"> State <span class="required">*</span>
                                     </label>
                                     <div class="col-md-6 col-sm-6 col-xs-12">
-                                        <input  class="form-control col-md-7 col-xs-12" type="text"  name="state">
+                                        <input  class="form-control col-md-7 col-xs-12" type="text"  value="<?php if(isset($data['address_3'])) echo $data['address_3'];?>"  name="address_3">
                                     </div>
                                 </div>
 
@@ -205,7 +216,25 @@
                                            for="teller_code"> Country <span class="required">*</span>
                                     </label>
                                     <div class="col-md-6 col-sm-6 col-xs-12">
-                                        <input  class="form-control col-md-7 col-xs-12" type="text"  name="state" required="true">
+                                        <input  class="form-control col-md-7 col-xs-12" type="text"  value="<?php if(isset($data['address_4'])) echo $data['address_4'];?>"   name="address_4" required="true">
+                                    </div>
+                                </div>
+
+                                    <div class="form-group" >
+                                    <label class="control-label col-md-3 col-sm-3 col-xs-12"
+                                           for="teller_code"> Contact <span class="required">*</span>
+                                    </label>
+                                    <div class="col-md-6 col-sm-6 col-xs-12">
+                                        <input  class="form-control col-md-7 col-xs-12" type="text"  value="<?php if(isset($data['contact'])) echo $data['contact'];?>"   name="contact" required="true">
+                                    </div>
+                                </div>
+
+                                  <div class="form-group" >
+                                    <label class="control-label col-md-3 col-sm-3 col-xs-12"
+                                           for="teller_code"> Email <span class="required">*</span>
+                                    </label>
+                                    <div class="col-md-6 col-sm-6 col-xs-12">
+                                        <input  class="form-control col-md-7 col-xs-12" type="text"  value="<?php if(isset($data['email'])) echo $data['email'];?>"   name="email" required="true">
                                     </div>
                                 </div>
 
@@ -236,6 +265,29 @@
             <br />
         </div>
         
+          <!-- /page content -->
+        <div class="modal fade" id="error" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Please Confirm Deletion</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p name="error">
+                            Are you Sure?
+                        </p>
+                    </div>
+                    <div class="modal-footer">
+                        <a href="../table/listCompany.php?del=<?php echo $data['id']?>"><button type="button" class="btn btn-primary">Save changes</button></a>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--         / modal-->
 
         <!-- footer content -->
         <div>

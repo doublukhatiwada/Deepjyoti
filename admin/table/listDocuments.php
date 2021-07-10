@@ -3,23 +3,23 @@
     include '../../class/database_table.php';
     include '../../connection/connect.php';
 
-    $users = new Database_Table('users');
-
-    
-    if(isset($_GET['del'])){
-        $users->deleteData('id',$_GET['del']);
-
-        $success = "!!!!!!!!!!!!!!!!!!Your Team has been Deleted!!!!!!!!!!!!";
-    }
-
-    $u = $users->findData('company_id',$_SESSION['company_id']);
+    $images = new Database_Table('images');
 
       $user_id = $_SESSION['user_id'];
-      $sn = 1;
     
     if($user_id == '')
         header('../login.php');
 
+     if(isset($_GET['del'])){
+        $images->deleteData('id',$_GET['del']);
+
+        $success = "!!!!!!!!!!!!!!!!!!Your Image has been Deleted!!!!!!!!!!!!";
+    }
+
+    $i = $images->findData('company_id',$_SESSION['company_id']);
+
+
+     $sn = 0;
 ?>
 
 <!DOCTYPE html>
@@ -31,7 +31,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Teams List</title>
+    <title>Documents List</title>
 
     <!-- Bootstrap -->
     <link href="../vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -86,24 +86,18 @@
                 </div>
 
                 <div class="clearfix"></div>
-                <?php if (isset($_GET['del'])):?>
-            <div  class="alert alert-success alert-dismissible fade in" role="alert">
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span>
-                </button>
-                <strong><?php echo $success?></strong>
-            </div>
-        <?php endif;?>
-
-            <!-- <div th:if="${errormsg!=null}" class="alert alert-danger alert-dismissible fade in" role="alert">
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span>
-                </button>
-                <strong th:text="${errormsg}"></strong>
-            </div> -->
+                 <?php if (isset($_GET['del'])):?>
+                 <div  class="alert alert-success alert-dismissible fade in" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span>
+                    </button>
+                    <strong><?php echo $success?></strong>
+                </div>
+                 <?php endif;?>
 
                     <div class="col-md-12 col-sm-12 col-xs-12">
                         <div class="x_panel">
                             <div class="x_title">
-                                <h2>Teams List<small>List of all teams under your company.</small></h2>
+                                <h2>Document List<small>List of all documents under your company.</small></h2>
                                 <ul class="nav navbar-right panel_toolbox">
                                     <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                                     </li>
@@ -124,30 +118,25 @@
                             <div class="x_content">
                                 <p class="text-muted font-13 m-b-30">
                                 </p>
-                                <div style="display:flex;"> <h5>Quick Action:<a  style="margin-left:10px;" href="../form/addTeam.php"> Add New Team </a></h5>
+                                <div style="display:flex;"> <h5>Quick Action:<a  style="margin-left:10px;" href="../form/addDocuments.php"> Add New  Document </a></h5>
                                 </div>
                                 <table id="datatable-buttons" class="table table-striped table-bordered">
                                     <thead>
                                     <tr>
                                         <th>S.N.</th>
-                                        <th>Full Name</th>
-                                        <th>Email</th>
-                                        <th>Contact</th>
-                                        <th>Gender</th>
+                                        <th>Document Name</th>
+                                       
                                     </tr>
                                     </thead>
 
 
                                     <tbody>
-                                     <?php foreach ($u as $a): ?>
-                                    <tr data-href="../form/addTeam.php?edit=<?php echo $a['id']?>">
-                                        <td><?php echo $sn++ ?></td>
-                                        <td><?php echo $a['first_name']." ".$a['middle_name']." ".$a['last_name'];?></td>
-                                        <td><?php echo $a['email']?></td>
-                                        <td><?php echo $a['contact']?></td>
-                                        <td><?php echo $a['gender']?></td>
+                                        <?php foreach ($i as $a):?>
+                                    <tr data-href="../form/addDocuments.php?edit=<?php echo $a['id']?>">
+                                        <td><?php echo ++$sn;?></td>
+                                        <td><?php echo $a['description']?></td>
                                     </tr>
-                                     <?php endforeach; ?> 
+                                <?php endforeach;?>
                                     </tbody>
                                 </table>
                             </div>
@@ -159,7 +148,7 @@
         <!-- /page content -->
     <!-- /page content -->
     <!--            modal -->
-    <div class="modal fade" id="error" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <!--   <div class="modal fade" id="error" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -177,7 +166,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
     <!--         / modal-->
 
 
